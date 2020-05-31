@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <title>Диплом к основы программи</title>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="04-диплом.css">
+</head>
+<body>
+
+  <h1>
+    <span class="rendzu">это не крестики-нолики, это рендзю!</span>
+    <span class="paintball">это не рендзю, это пейнтбол!</span>
+  </h1>
+
+  <div class="comm">
+    <div class="vlad">Зелеными камнями играет команда:
+      <div class="commandvlad" ><span>"Влады"</span></div>
+      <div class="commandvladdown" ></div>
+      <div class="silenzium">
+
+        <div class="rendzu">В игре есть секретная кнопка, найдя которую, вы можете замазать разработчика краской! Ну или Нетологию...</div>
+
+        <div class="paintball">Поздравляем! Вы хорошо учились, вы нашли секретную кнопку! Теперь мочите разработчика, но постарайтесь не попадать в Нетологию...</div>
+
+      </div>
+      <div class="buttons">
+        <button type="button" class="begin">
+          <div>Новая<br>игра</div>
+        </button>
+        <button type="button" class="soundoff">
+          <span>Включить тишину</span>
+          <span>Выключить тишину</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="pole">
+      <div class="cell">
+        <img src="pole.svg" class="romb">
+        <img src="nol1.svg" class="stonegre">
+        <img src="nol2.svg" class="stonered">
+        <div class="num">0</div>
+      </div>
+    </div>
+
+    <div class="neto">Красными камнями играет команда Нетологии:
+      <div class="commandneto"><span>"Усердные киборги"</span></div>
+      <div class="commandnetodown" ></div>
+
+      <button type="button" class="secret">Секретная<br>кнопка</button>
+      <div class="silenzium">
+        <div class="secretend ">Поздравляем! Кнопка сломана. За ваше усердие вы приняты в команду Нетологии "Усердные киборги"! Так держать!</div>
+      </div>
+    </div>
+  </div>
+
+<!--  <div class="popup hidd exit">-->
+<div class="popup ">
+
+    <div class="vinvlad hidd">
+      <span class="vinvladtext">Влады оказались на высоте! Они победили! Ура!</span>
+      <div class="vinsymbol"></div>
+    </div>
+    <div class="vinneto ">
+      <span class="vinnetotext">Нетология таки победила! Эх...</span>
+      <div class="vinsymbol"></div>
+    </div>
+
+    <div class="askquestion">Запустить новую партию?</div>
+    <div class="buttonspopup">
+      <button type="button" class="repeat">Играть снова</button>
+      <button type="button" class="pistol">Пострелять</button>
+    </div>
+  </div>
+
+<script src="04-диплом.js"></script>
+</body>
+</html>
+
