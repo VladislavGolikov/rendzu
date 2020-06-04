@@ -29,6 +29,8 @@ let stepRedWav=new Audio('stepred.ogg');
 let stepGreWav=new Audio('stepgre.wav');
 let horseWav=new Audio('horse.wav');
 let hurtWav=new Audio('hurt.wav');
+let vinVladWav=new Audio('vinvlad.ogg');
+let vinNetoWav=new Audio('vinneto.mp3');
 let backMusicRen=new Audio('despacito.mp3');
 let backMusicPai=new Audio('battleon.mp3');
 backMusicRen.loop=true;
@@ -38,6 +40,8 @@ backMusicPai.volume=0.1;
 
 let buttonSound=document.querySelector('.soundoff');
 let buttonNewGame=document.querySelector('.begin');
+let buttonNewGameRepeat=document.querySelector('.repeat');
+let buttonPistol=document.querySelector('.pistol');
 
 let allArea=document.querySelector('body');
 let paintballBack=document.querySelector('body');
@@ -46,6 +50,11 @@ let paintball=document.querySelectorAll('.paintball');
 
 let secret=document.querySelector('.secret');
 let secretEnd=document.querySelector('.secretend');
+
+const vinVlad=document.querySelector('.vinvlad');
+const vinNeto=document.querySelector('.vinneto');
+const vinNone=document.querySelector('.vinnone');
+
 
 /* ------------ конец определений ------------------------ */
 
@@ -152,18 +161,26 @@ function moveString() {
 }
 /*------попап------------*/
 let popUp=document.querySelector('.popup');
-document.addEventListener('keyup',enterExitPopup);
+buttonNewGameRepeat.addEventListener('click',enterExitPopup);
 
-function enterExitPopup(teamVin) {
-let vinvlad=document.querySelector('.vinvlad');
-let vinneto=document.querySelector('.vinneto');
-vinvlad.classList.toggle('hidd');
-vinneto.classList.toggle('hidd');
-
-    /*
-    if (popUp.classList.contains('hidd')) {popUp.classList.remove('hidd')};
-    popUp.classList.toggle('exit');
-    popUp.classList.toggle('enter');*/
+function enterExitPopup(teamVin,entrance=false) {
+    if (entrance) {
+        if (popUp.classList.contains('hidd')) {popUp.classList.remove('hidd')};
+        if (!vinVlad.classList.contains('hidd')) {vinVlad.classList.add('hidd')};
+        if (!vinNeto.classList.contains('hidd')) {vinNeto.classList.add('hidd')};
+        if (!vinNone.classList.contains('hidd')) {vinNone.classList.add('hidd')};
+        teamVin.classList.remove('hidd');
+        popUp.classList.remove('exit')
+        popUp.classList.add('enter');
+    }else{
+        event.stopPropagation();
+        popUp.classList.remove('enter');
+        popUp.classList.add('exit');
+        pistolOff();
+        horseWav.play();
+        stepRedWav.play();
+        startGam();
+    }
 }
 
 
@@ -178,9 +195,8 @@ allArea.addEventListener('click',shot);
 secret.addEventListener('click',secretClick);
 buttonNewGame.addEventListener('click',endGam);
 buttonSound.addEventListener('click',soundOffOn);
+buttonPistol.addEventListener('click',pistolYes);
 
-paintball[0].classList.toggle("hidd");
-paintball[1].classList.toggle("hidd");
 buttonSound.firstElementChild.classList.toggle('hidd');
 
 function secretClick() {
@@ -211,27 +227,38 @@ function shot() {
     }
 }
 
+function pistolYes() {
+    event.stopPropagation();
+    popUp.classList.remove('enter');
+    popUp.classList.add('exit');
+    horseWav.play();
+    pistolOn();
+}
+
 function pistol() {
     if (event.code=='ControlLeft'){
-        if (!pistolActive) {
-            allArea.style.cursor='url(pistol.jpg), not-allowed';
-            pistolActive=true;
-            secret.classList.add("hidd");
-            if (!backMusicRen.paused) {backMusicPai.play()};
-            backMusicRen.pause();
-        }else{
-            allArea.style.cursor='cell';
-            pistolActive=false;
-            secret.classList.remove("hidd");
-            if (!backMusicPai.paused) {backMusicRen.play()};
-            backMusicPai.pause();
-        }
-        rendzu[0].classList.toggle("hidd");
-        paintball[0].classList.toggle("hidd");
-        rendzu[1].classList.toggle("hidd");
-        paintball[1].classList.toggle("hidd");
-        paintballBack.classList.toggle("paintballback");
+        if (!pistolActive) {pistolOn()}else{pistolOff()}
     }
+}
+function pistolOn() {
+    allArea.style.cursor='url(pistol.jpg), not-allowed';
+    pistolActive=true;
+    secret.classList.add("hidd");
+    paintball.forEach(function(elem,num,arr){elem.classList.remove('hidd')});
+    rendzu.forEach(function(elem,num,arr){elem.classList.add('hidd')});
+    paintballBack.classList.add("paintballback");
+    if (!backMusicRen.paused) {backMusicPai.play()};
+    backMusicRen.pause();
+}
+function pistolOff() {
+    allArea.style.cursor='cell';
+    pistolActive=false;
+    if (secretClik>0) {secret.classList.remove("hidd")};
+    rendzu.forEach(function(elem,num,arr){elem.classList.remove('hidd')});
+    paintball.forEach(function(elem,num,arr){elem.classList.add('hidd')});
+    paintballBack.classList.remove("paintballback");
+    if (!backMusicPai.paused) {backMusicRen.play()};
+    backMusicPai.pause();
 }
 
 function soundOffOn() {
@@ -353,16 +380,13 @@ function stopIt(ston) {
 function endGam(team) {
     clearTimeout(netology);
     gameRun=false;
-    let vin='';
-    if (team==='stonegreen') {vin='Влад оказался на высоте! Он победил! Ура!'}
-        else{vin='Мы не победили, но борьба продолжается!'};
-    if (team==='stonered') {vin='Нетология таки победила! Эх...'};
-    vin+=' Запустить новую партию?';
-    if (confirm(vin)==true) {
-        stepRedWav.play();
-    if (team!=='stonegreen'||team!=='stonered') {event.stopPropagation()};
-        startGam();
-    }
+    if (team==='stonegreen') {vinVladWav.play(); enterExitPopup(vinVlad,true);return};
+    if (team==='stonered') {vinNetoWav.play(); enterExitPopup(vinNeto,true);return};
+    if (team!=='stonegreen'||team!=='stonered') {
+        event.stopPropagation();
+        horseWav.play();
+        enterExitPopup(vinNone,true);
+    };
 }
 
 function startGam() {
