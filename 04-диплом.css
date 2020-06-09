@@ -43,13 +43,20 @@ h1 {
     position: relative;
     border-radius: 15%;
     background:  linear-gradient(170deg, #564711, #008822, #564711);
-        box-shadow: 3px -3px #333333;
-
+    box-shadow: 3px -3px #333333;
 }
 
 .neto {
     color: red;
     background:  linear-gradient(-10deg,  #008822, #564711, #008822);
+}
+.recordvlad , .recordneto {
+    position: absolute;
+    width: 100%;
+    height: 10vh;
+    top: -13vh;
+    font-size: 12vh;
+    font-weight: bold;
 }
 
 .commandvlad {
@@ -117,17 +124,17 @@ h1 {
 }
 
 @keyframes stepball {
-    from {opacity: 1;}
-    30% {opacity: 1;}
-    to {opacity: 0;}
+    from {opacity: 0; transform: scale(0.5);}
+    30% {opacity: 0; transform: scale(0.5);}
+    to {opacity: 1; transform: scale(1);}
 }
 
 .stepballblind {
     animation-name: stepball;
-    animation-duration: 1000ms;
-    animation-timing-function: ease-out;
+    animation-duration: 300ms;
+    animation-timing-function: linear;
     animation-delay: 0s;
-    animation-iteration-count: infinite;
+    animation-iteration-count: 1;
     animation-direction: normal;
     animation-fill-mode: forwards;
     animation-play-state: running;
@@ -203,12 +210,40 @@ h1 {
     position: absolute;
     top: 75vh;
     left: 0;
-    font-size: 10px;
-    color: #ffffff;
+    font-size: 1.5vh;
+    color: #ddddee;
     background-color: rgba(0%, 100%, 50%, 0.2);
     width: 20%;
     height: 10%;
     cursor: pointer;
+}
+.secretoutoforder {
+    transform-origin: left top;
+    animation-name: outoforder;
+    animation-duration: 1000ms;
+    animation-timing-function: ease-out;
+    animation-delay: 0s;
+    animation-iteration-count: 1;
+    animation-direction: normal;
+    animation-fill-mode: forwards;
+    animation-play-state: running;
+}
+@keyframes outoforder {
+
+    from {transform: rotateZ(0);
+        }
+    40% {transform: rotateZ(80deg);
+    }
+    55% {transform: rotateZ(50deg);
+    }
+    62.5% {transform: rotateZ(65deg);
+    }
+    65% {transform: rotateZ(60deg);
+        background-color: rgba(0%, 100%, 50%, 0.2);
+    }
+    to {transform: rotateZ(60deg);
+        background-color: red;
+    }
 }
 
 .pushnot {
@@ -246,7 +281,6 @@ h1 {
     width: 30px;
     top: 5px;
     left: 5px;
-    visibility: hidden;
 }
 
 .num {
@@ -256,6 +290,22 @@ h1 {
     left: 5px;
 }
 
+@keyframes romblind {
+    from {filter: hue-rotate(0deg) saturate(1); transform: scale(1);}
+    to {filter: hue-rotate(-170deg) saturate(8); transform: scale(1.1);}
+}
+
+.rombblind {
+    animation-name: romblind;
+    animation-duration: 500ms;
+    animation-timing-function: steps(2);
+    animation-delay: 0s;
+    animation-iteration-count: infinite;
+    animation-direction: normal;
+    animation-fill-mode: forwards;
+    animation-play-state: running;
+
+}
 /*------------ игра пейнтбол ----------------------------*/
 
 @keyframes shortr {

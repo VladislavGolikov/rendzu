@@ -8,12 +8,15 @@ const makeUpSize=sizeCell*0.8+'px';
 const beginShotX=95; /* поправка на курсор-пистолет */
 const beginShotY=7; /* поправка на курсор-пистолет */
 
-const ballDown=5; /* количество мигающих шаров под названием команд */
+const ballDown=7; /* количество мигающих шаров под названием команд */
 const betweenBall=1.6; /* это расстояние относительное */
+let blindBallCount=ballDown; /* прогресс мигающих шаров */
 
 let shotRed='<div class="shotred"></div>'; /* отображение выстрела */
 let ballRed='<div class="stepred"></div>'; /* отображение красного камня */
 let ballGre='<div class="stepgre"></div>'; /* отображение зеленого камня */
+let cursorBlind=Math.floor(sizeField*sizeField/2)-sizeField;
+/* позиция мигающего курсора (выше центра) */
 
 let pistolActive=false; /* триггер игры рендзю*/
 let myStep=false; /* триггер хода зеленой команды */
@@ -54,6 +57,14 @@ let secretEnd=document.querySelector('.secretend');
 const vinVlad=document.querySelector('.vinvlad');
 const vinNeto=document.querySelector('.vinneto');
 const vinNone=document.querySelector('.vinnone');
+
+const secretString='pistol';
+let secretInput='';
+
+let recordVlad=0;
+let recordNeto=0;
+const forRecordVlad=document.querySelector('.recordvlad');
+const forRecordNeto=document.querySelector('.recordneto');
 
 
 /* ------------ конец определений ------------------------ */
@@ -106,6 +117,27 @@ for (i=1;i<=ballDown;i++){
 
 let areaBallBlindRed=document.querySelectorAll('.stepred');
 let areaBallBlindGre=document.querySelectorAll('.stepgre');
+let order=areaBallBlindGre;
+blindBall();
+
+function blindBall() {
+    if (ballDown===blindBallCount) {
+        if (myStep) {order=areaBallBlindGre}else{order=areaBallBlindRed};
+    }
+
+    order[ballDown-blindBallCount].classList.remove('stepballblind');
+    blindBallCount++;
+
+    if (blindBallCount>ballDown) {
+        order.forEach(function(elem,num,arr){elem.classList.add('hidd')});
+        blindBallCount-=ballDown;
+    }
+
+    order[ballDown-blindBallCount].classList.remove('hidd');
+    order[ballDown-blindBallCount].classList.add('stepballblind');
+    order[ballDown-blindBallCount].addEventListener('animationend',blindBall,{once:true});
+}
+
 
 
 // движение строк:
@@ -159,6 +191,8 @@ function moveString() {
         moveStringRight.style.left=shiftRight+'px';
     }
 }
+
+marker[cursorBlind].classList.add('rombblind');
 /*------попап------------*/
 let popUp=document.querySelector('.popup');
 buttonNewGameRepeat.addEventListener('click',enterExitPopup);
@@ -189,6 +223,7 @@ function enterExitPopup(teamVin,entrance=false) {
 /* ------------------ игра пейнтбол -------------------- */
 
 document.addEventListener('keyup',pistol);
+document.addEventListener('keydown',moveCursor);
 
 allArea.addEventListener('click',shot);
 
@@ -209,7 +244,7 @@ function secretClick() {
         secret.style.left=leftJump;
         hurtWav.play();
     }else{
-        secret.classList.add('hidd');
+        secret.classList.add('secretoutoforder');
         secretEnd.classList.remove('hidd');
         horseWav.play();
     }
@@ -235,11 +270,20 @@ function pistolYes() {
     pistolOn();
 }
 
-function pistol() {
-    if (event.code=='ControlLeft'){
+function pistol() { /* теперь по комбинации клавиш! */
+    let currentPosition=secretInput.length;
+    if (event.key==secretString.charAt(currentPosition)) {
+        secretInput+=event.key;
+    }else{
+        secretInput=''
+    };
+
+    if (secretInput===secretString){
+        secretInput='';
         if (!pistolActive) {pistolOn()}else{pistolOff()}
     }
 }
+
 function pistolOn() {
     allArea.style.cursor='url(pistol.jpg), not-allowed';
     pistolActive=true;
@@ -278,18 +322,31 @@ function soundOffOn() {
 /* ---------------------- игра рендзю -------------------------- */
 startGam();
 
+function moveCursor() {
+    marker[cursorBlind].classList.remove('rombblind');
+    switch (event.code) {
+        case 'ArrowLeft': if (cursorBlind%sizeField!=0) {cursorBlind--};break;
+        case 'ArrowRight': if (cursorBlind%sizeField!=sizeField-1) {cursorBlind++};break;
+        case 'ArrowUp': if (cursorBlind>=sizeField) {cursorBlind-=sizeField};break;
+        case 'ArrowDown': if (cursorBlind<sizeField*(sizeField-1)) {cursorBlind+=sizeField};break;
+        case 'Space': stepMyNext(cursorBlind,areaStoneGre[cursorBlind]); break;
+    }
+    marker[cursorBlind].classList.add('rombblind');
+}
 
 function stepMy() {
     if (event.target.className!='romb'||myStep===false||gameRun===false) {return};
-    let razbor=event.target.id;
-    razbor=+razbor.slice(4,7);
-    if (stones[razbor]==='') {stones[razbor]='stonegreen'}else{return};
-    event.target.nextElementSibling.style.visibility='visible';
+    let mesto=event.target.id;
+    mesto=+mesto.slice(4,7);
+    stepMyNext(mesto,event.target.nextElementSibling)
+}
+
+function stepMyNext(razbor,stepCell) {
+    if (stones[razbor]==='') {stones[razbor]='stonegreen'}else{hurtWav.play();return};
+    stepCell.classList.remove('hidd');
     netology=setTimeout(stepNet, netologyThink);
     stepGreWav.play();
     myStep=false;
-    areaBallBlindRed.forEach(function(elem,num,arr){elem.classList.add('stepballblind')});
-    areaBallBlindGre.forEach(function(elem,num,arr){elem.classList.remove('stepballblind')});
     stopIt('stonegreen');
 }
 
@@ -319,12 +376,10 @@ function stepNet() {
 
     stones[razbor]='stonered';
     let stepRed=document.getElementById('pole'+razbor);
-    stepRed.nextElementSibling.nextElementSibling.style.visibility='visible';
+    stepRed.nextElementSibling.nextElementSibling.classList.remove('hidd');
     stepRedWav.play();
     stopIt('stonered');
     myStep=true;
-    areaBallBlindRed.forEach(function(elem,num,arr){elem.classList.remove('stepballblind')});
-    areaBallBlindGre.forEach(function(elem,num,arr){elem.classList.add('stepballblind')});
 }
 
 function stopIt(ston) {
@@ -380,11 +435,28 @@ function stopIt(ston) {
 function endGam(team) {
     clearTimeout(netology);
     gameRun=false;
-    if (team==='stonegreen') {vinVladWav.play(); enterExitPopup(vinVlad,true);return};
-    if (team==='stonered') {vinNetoWav.play(); enterExitPopup(vinNeto,true);return};
+    if (team==='stonegreen') {
+        vinVladWav.play();
+        recordVlad++;
+        forRecordVlad.innerHTML=recordVlad;
+        document.cookie=`recordVlad=${recordVlad}; max-age=3600000`;
+/*        Cookies.set('recordVlad','вася');*/
+        alert(document.cookie);
+ /*       alert(Cookies.get('recordVlad'));*/
+        enterExitPopup(vinVlad,true);
+        return;
+    };
+    if (team==='stonered') {
+        vinNetoWav.play();
+        recordNeto++;
+        forRecordNeto.innerHTML=recordNeto;
+        document.cookie=`recordNeto=${recordNeto}; max-age=3600000`;
+        enterExitPopup(vinNeto,true);
+        return;
+    };
     if (team!=='stonegreen'||team!=='stonered') {
         event.stopPropagation();
-        horseWav.play();
+        hurtWav.play();
         enterExitPopup(vinNone,true);
     };
 }
@@ -395,18 +467,15 @@ function startGam() {
 
     for (j=0;j<=sizeField*sizeField-1;j++){
         stones[j]='';
-        areaStoneGre[j].style.visibility='hidden';
-        areaStoneGre[j].nextElementSibling.style.visibility='hidden';
+        areaStoneGre[j].classList.add('hidd');
+        areaStoneRed[j].classList.add('hidd');
     }
     let firstRed=document.getElementById('pole'+Math.floor(sizeField*sizeField/2));
-    firstRed.nextElementSibling.nextElementSibling.style.visibility='visible';
+    firstRed.nextElementSibling.nextElementSibling.classList.remove('hidd');
     stones[Math.floor(sizeField*sizeField/2)]='stonered';
     gameRun=true;
     myStep=true;
-    areaBallBlindGre.forEach(function(elem,num,arr){elem.classList.add('stepballblind')});
-    areaBallBlindRed.forEach(function(elem,num,arr){elem.classList.remove('stepballblind')});
 }
-
 
 function positionGod(orient,long,sell,ston) {
 
