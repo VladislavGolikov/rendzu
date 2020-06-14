@@ -50,6 +50,7 @@ h1 {
     color: red;
     background:  linear-gradient(-10deg,  #008822, #564711, #008822);
 }
+
 .recordvlad , .recordneto {
     position: absolute;
     width: 100%;
@@ -102,6 +103,7 @@ h1 {
     background-size: contain;
     border-radius: 5%;
 }
+
 .commandnetodown , .commandvladdown {
     position: absolute;
     width: 70%;
@@ -179,7 +181,6 @@ h1 {
     text-shadow: 2px -1px blue;
 }
 
-
 .buttons {
     position: absolute;
     width: 100%;
@@ -217,6 +218,7 @@ h1 {
     height: 10%;
     cursor: pointer;
 }
+
 .secretoutoforder {
     transform-origin: left top;
     animation-name: outoforder;
@@ -228,6 +230,7 @@ h1 {
     animation-fill-mode: forwards;
     animation-play-state: running;
 }
+
 @keyframes outoforder {
 
     from {transform: rotateZ(0);
@@ -271,6 +274,7 @@ h1 {
     width: 100%;
     height: 100%;
 }
+
 .romb:hover {
     filter: brightness(1.4) saturate(2);
     outline: 3px green solid;
@@ -366,6 +370,7 @@ h1 {
     box-sizing: border-box;
     filter: drop-shadow(2px -2px #220000);
 }
+
 .vinneto {
     background-image: url(netology.jpg);
 }
@@ -374,6 +379,7 @@ h1 {
     from {filter: saturate(1); top: 50%; left: 50%; width: 60%;height: 60%;}
     to {filter: saturate(10);  top: 49%; left: 49%; width: 62%;height: 62%;}
 }
+
 .vinsymbol {
     position: absolute;
     background-image: url(vinsymbol.png);
@@ -401,6 +407,7 @@ h1 {
     font-weight: bold;
     color: #ff0000;
 }
+
 .askquestion {
     width: 100%;
     top: 80%;
@@ -412,6 +419,7 @@ h1 {
     position: absolute;
     filter: drop-shadow(2px -2px #220000);
 }
+
 .buttonspopup {
     position: absolute;
     width: 100%;
@@ -427,6 +435,7 @@ h1 {
     from {background: linear-gradient(10deg, #00ff00, orange);border-radius: 10px; }
     to {background: linear-gradient(90deg, #00ff00, orange);border-radius: 30px;}
 }
+
 .repeat , .pistol {
     color: navy;
     font-size: 2.25vh;
@@ -446,10 +455,12 @@ h1 {
     animation-play-state: running;
 
 }
+
 @keyframes enter {
     from { transform: scale(0);left: calc(50vw);top:-34vh;}
     to { transform: scale(1);left: calc(50vw - 44vh);top:10vh;}
 }
+
 .enter {
     animation-name: enter;
     animation-duration: 1000ms;
@@ -460,10 +471,12 @@ h1 {
     animation-fill-mode: forwards;
     animation-play-state: running;
 }
+
 @keyframes exit {
     from { transform: scale(1);left: calc(50vw - 44vh);top:10vh;}
     to { transform: scale(0);left: calc(50vw);top:54vh;}
 }
+
 .exit {
     animation-name: exit;
     animation-duration: 1500ms;

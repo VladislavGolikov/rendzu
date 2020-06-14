@@ -61,12 +61,18 @@ const vinNone=document.querySelector('.vinnone');
 const secretString='pistol';
 let secretInput='';
 
+const forRecordVlad=document.querySelector('.recordvlad');/* для счета в игре */
+const forRecordNeto=document.querySelector('.recordneto');
 let recordVlad=0;
 let recordNeto=0;
-const forRecordVlad=document.querySelector('.recordvlad');
-const forRecordNeto=document.querySelector('.recordneto');
-
-
+if (!!window.localStorage.getItem('recordOfNeto')) {
+    recordNeto=window.localStorage.getItem('recordOfNeto');
+    forRecordNeto.innerHTML=recordNeto;
+};
+if (!!window.localStorage.getItem('recordOfVlad')){
+    recordVlad=window.localStorage.getItem('recordOfVlad');
+    forRecordVlad.innerHTML=recordVlad;
+};
 /* ------------ конец определений ------------------------ */
 
 /* ------------ верстка ------------------------ */
@@ -138,8 +144,6 @@ function blindBall() {
     order[ballDown-blindBallCount].addEventListener('animationend',blindBall,{once:true});
 }
 
-
-
 // движение строк:
 setInterval(moveString,15);
 let moveStringLeftRendzu=document.querySelector('.silenzium > .rendzu');
@@ -206,6 +210,7 @@ function enterExitPopup(teamVin,entrance=false) {
         teamVin.classList.remove('hidd');
         popUp.classList.remove('exit')
         popUp.classList.add('enter');
+  //      buttonNewGameRepeat.focus(); пробел нажимает на кнопку в фокусе!!!
     }else{
         event.stopPropagation();
         popUp.classList.remove('enter');
@@ -214,10 +219,14 @@ function enterExitPopup(teamVin,entrance=false) {
         horseWav.play();
         stepRedWav.play();
         startGam();
+        buttonNewGameRepeat.blur();
     }
 }
 
-
+/* ---------- пока спрячем цифры --- */
+function hideSeekNumber(){
+    nomer.forEach(function(elem,num,arr){elem.classList.toggle('hidd')})
+}
 /* ---------------- конец верстки ------------------------- */
 
 /* ------------------ игра пейнтбол -------------------- */
@@ -323,6 +332,7 @@ function soundOffOn() {
 startGam();
 
 function moveCursor() {
+    if (gameRun===false) {return};
     marker[cursorBlind].classList.remove('rombblind');
     switch (event.code) {
         case 'ArrowLeft': if (cursorBlind%sizeField!=0) {cursorBlind--};break;
@@ -330,12 +340,13 @@ function moveCursor() {
         case 'ArrowUp': if (cursorBlind>=sizeField) {cursorBlind-=sizeField};break;
         case 'ArrowDown': if (cursorBlind<sizeField*(sizeField-1)) {cursorBlind+=sizeField};break;
         case 'Space': stepMyNext(cursorBlind,areaStoneGre[cursorBlind]); break;
+        case 'Digit1': hideSeekNumber(); break;
     }
     marker[cursorBlind].classList.add('rombblind');
 }
 
 function stepMy() {
-    if (event.target.className!='romb'||myStep===false||gameRun===false) {return};
+    if (!event.target.classList.contains('romb')||myStep===false||gameRun===false) {return};
     let mesto=event.target.id;
     mesto=+mesto.slice(4,7);
     stepMyNext(mesto,event.target.nextElementSibling)
@@ -439,10 +450,7 @@ function endGam(team) {
         vinVladWav.play();
         recordVlad++;
         forRecordVlad.innerHTML=recordVlad;
-        document.cookie=`recordVlad=${recordVlad}; max-age=3600000`;
-/*        Cookies.set('recordVlad','вася');*/
-        alert(document.cookie);
- /*       alert(Cookies.get('recordVlad'));*/
+        window.localStorage.setItem('recordOfVlad',recordVlad);
         enterExitPopup(vinVlad,true);
         return;
     };
@@ -450,7 +458,7 @@ function endGam(team) {
         vinNetoWav.play();
         recordNeto++;
         forRecordNeto.innerHTML=recordNeto;
-        document.cookie=`recordNeto=${recordNeto}; max-age=3600000`;
+        window.localStorage.setItem('recordOfNeto',recordNeto);
         enterExitPopup(vinNeto,true);
         return;
     };
